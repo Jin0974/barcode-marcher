@@ -80,4 +80,4 @@ if file_names and file_detail:
         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 else:
-    st.info('请上传两个表格')
+    st.info('请上传“准备的表格（商品名称）”和“商品明细表（商品名称+条码）”，系统会自动进行匹配。')
