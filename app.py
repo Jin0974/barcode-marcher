@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 from rapidfuzz import process, fuzz
 import io
-import os
-import sys
 
 st.set_page_config(layout="wide")
 
@@ -12,7 +10,7 @@ st.title('商品名称与条码智能匹配工具')
 with st.expander('使用说明', expanded=False):
     st.markdown('''
     1. 上传“准备的表格”（只含商品名称）
-    2. 系统自动引用本地商品明细表，无需上传
+    2. 上传“商品明细表”（含商品名称和条码）
     3. 系统自动匹配，可手动修正
     4. 导出结果为Excel
     ''')
@@ -20,19 +18,8 @@ with st.expander('使用说明', expanded=False):
 col1, col2 = st.columns(2)
 with col1:
     file_names = st.file_uploader('上传准备的表格（商品名称）', type=['xls', 'xlsx'], key='names')
-
-# 自动读取本地商品明细表，兼容PyInstaller打包路径
-if hasattr(sys, '_MEIPASS'):
-    # PyInstaller打包后的临时目录
-    base_path = sys._MEIPASS
-else:
-    base_path = os.getcwd()
-local_detail_path = os.path.join(base_path, '商品信息表-2025_06_13-16_12_41.xls')
-if not os.path.exists(local_detail_path):
-    st.error(f'未找到本地商品明细表: {local_detail_path}')
-    file_detail = None
-else:
-    file_detail = local_detail_path
+with col2:
+    file_detail = st.file_uploader('上传商品明细表（商品名称+条码）', type=['xls', 'xlsx'], key='detail')
 
 if file_names and file_detail:
     df_names = pd.read_excel(file_names)
@@ -93,4 +80,4 @@ if file_names and file_detail:
         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 else:
-    st.info('请上传准备的表格（商品名称），系统会自动引用本地商品明细表')
+    st.info('请上传两个表格')
